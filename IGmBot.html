@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Growth Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d);
+        }
+        .account-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        .progress-bar {
+            transition: width 0.5s ease-in-out;
+        }
+        #console {
+            font-family: 'Courier New', monospace;
+            height: 200px;
+            overflow-y: auto;
+            background-color: #1a1a1a;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="gradient-bg text-white py-6 px-4 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <img src="https://placehold.co/40x40" alt="Instagram logo" class="rounded-full">
+                <h1 class="text-2xl font-bold">Instagram Growth Assistant</h1>
+            </div>
+            <div class="flex space-x-4">
+                <button class="bg-white text-pink-600 px-4 py-2 rounded-full font-semibold hover:bg-gray-100">Dashboard</button>
+                <button class="bg-pink-600 text-white px-4 py-2 rounded-full font-semibold hover:bg-pink-700">Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-8">
+            <div class="p-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Follower Growth Parameters</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div>
+                        <label class="block text-gray-700 mb-2">Target Username</label>
+                        <input type="text" id="targetUsername" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent" placeholder="username_to_grow">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2">Daily Follow Limit</label>
+                        <input type="number" id="dailyLimit" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent" placeholder="50" value="50">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2">Target Accounts</label>
+                        <select id="targetAccounts" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent">
+                            <option value="similar">Similar Accounts</option>
+                            <option value="location">By Location</option>
+                            <option value="hashtags">By Hashtags</option>
+                            <option value="competitor">Competitor Followers</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label class="block text-gray-700 mb-2">Start Time</label>
+                        <input type="time" id="startTime" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent" value="09:00">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2">End Time</label>
+                        <input type="time" id="endTime" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent" value="20:00">
+                    </div>
+                </div>
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center space-x-2">
+                        <input type="checkbox" id="enableLikes" class="h-5 w-5 text-pink-600 rounded focus:ring-pink-500" checked>
+                        <label for="enableLikes" class="text-gray-700">Like Recent Posts</label>
+                    </div>
+                    <button id="startBot" class="bg-pink-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-pink-700 transition-all flex items-center space-x-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                        </svg>
+                        <span>Start Growth Campaign</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Stats Panel -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                <div class="p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Campaign Statistics</h2>
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="text-center p-4 bg-gray-50 rounded-lg">
+                            <div class="text-3xl font-bold text-pink-600" id="totalFollowed">0</div>
+                            <div class="text-gray-600">Total Followed</div>
+                        </div>
+                        <div class="text-center p-4 bg-gray-50 rounded-lg">
+                            <div class="text-3xl font-bold text-pink-600" id="followBacks">0</div>
+                            <div class="text-gray-600">Follow Backs</div>
+                        </div>
+                        <div class="text-center p-4 bg-gray-50 rounded-lg">
+                            <div class="text-3xl font-bold text-pink-600" id="likesGiven">0</div>
+                            <div class="text-gray-600">Likes Given</div>
+                        </div>
+                        <div class="text-center p-4 bg-gray-50 rounded-lg">
+                            <div class="text-3xl font-bold text-pink-600" id="growthRate">0%</div>
+                            <div class="text-gray-600">Growth Rate</div>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <div class="flex justify-between mb-2">
+                            <span class="text-gray-700">Daily Progress (50/200)</span>
+                            <span class="text-gray-700" id="dailyProgress">0%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5">
+                            <div class="bg-pink-600 h-2.5 rounded-full progress-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                <div class="p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Recent Activity</h2>
+                    <div id="activityLog" class="space-y-4">
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                            <div class="text-sm text-gray-500">No recent activity yet</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Console Output -->
+        <div class="mt-8 bg-gray-900 rounded-lg shadow-lg overflow-hidden">
+            <div class="px-4 py-2 bg-gray-800 text-white">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-semibold">Console Output</h3>
+                    <button id="clearConsole" class="text-gray-300 hover:text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div id="console" class="p-4 text-green-400 text-sm whitespace-pre-wrap"></div>
+        </div>
+
+        <!-- Suggested Accounts -->
+        <div class="mt-8">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-gray-800">Suggested Accounts to Follow</h2>
+                <button id="refreshAccounts" class="text-pink-600 hover:text-pink-800 flex items-center space-x-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                    </svg>
+                    <span>Refresh</span>
+                </button>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4" id="suggestedAccounts">
+                <!-- Accounts will be added here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data for suggested accounts
+        const sampleAccounts = [
+            { username: "travelphotographer", followers: "542K", category: "Photography" },
+            { username: "fitnesstrainer", followers: "321K", category: "Fitness" },
+            { username: "foodblogger", followers: "876K", category: "Food" },
+            { username: "techreviewer", followers: "245K", category: "Technology" },
+            { username: "fashiondesigner", followers: "654K", category: "Fashion" },
+            { username: "musicproducer", followers: "432K", category: "Music" },
+            { username: "artstudio", followers: "198K", category: "Art" },
+            { username: "businesscoach", followers: "387K", category: "Business" },
+            { username: "yogateacher", followers: "276K", category: "Lifestyle" },
+            { username: "comedian", followers: "765K", category: "Entertainment" },
+            { username: "interior_design", followers: "412K", category: "Design" },
+            { username: "booklover", followers: "157K", category: "Literature" }
+        ];
+
+        // DOM Elements
+        const startBotBtn = document.getElementById('startBot');
+        const refreshAccountsBtn = document.getElementById('refreshAccounts');
+        const clearConsoleBtn = document.getElementById('clearConsole');
+        const suggestedAccountsDiv = document.getElementById('suggestedAccounts');
+        const consoleOutput = document.getElementById('console');
+        const totalFollowedSpan = document.getElementById('totalFollowed');
+        const followBacksSpan = document.getElementById('followBacks');
+        const likesGivenSpan = document.getElementById('likesGiven');
+        const growthRateSpan = document.getElementById('growthRate');
+        const dailyProgressSpan = document.getElementById('dailyProgress');
+        const progressBar = document.querySelector('.progress-bar');
+        const activityLog = document.getElementById('activityLog');
+
+        // State variables
+        let isRunning = false;
+        let totalFollowed = 0;
+        let followBacks = 0;
+        let likesGiven = 0;
+        let campaignInterval;
+        let currentFollowers = 1500; // Starting follower count
+
+        // Initialize the page
+        function initialize() {
+            loadSuggestedAccounts();
+            updateStats();
+            
+            // Add event listeners
+            startBotBtn.addEventListener('click', toggleBot);
+            refreshAccountsBtn.addEventListener('click', loadSuggestedAccounts);
+            clearConsoleBtn.addEventListener('click', clearConsole);
+            
+            // Add follow buttons to suggested accounts
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('follow-btn')) {
+                    const username = e.target.dataset.username;
+                    followAccount(username);
+                }
+            });
+        }
+
+        // Toggle the bot on/off
+        function toggleBot() {
+            if (isRunning) {
+                stopBot();
+            } else {
+                startBot();
+            }
+        }
+        
+        // Start the bot simulation
+        function startBot() {
+            const targetUsername = document.getElementById('targetUsername').value;
+            const dailyLimit = parseInt(document.getElementById('dailyLimit').value);
+            const targetAccounts = document.getElementById('targetAccounts').value;
+            const startTime = document.getElementById('startTime').value;
+            const endTime = document.getElementById('endTime').value;
+            
+            if (!targetUsername) {
+                logToConsole("Please enter a target username");
+                return;
+            }
+            
+            isRunning = true;
+            startBotBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+                <span>Stop Campaign</span>
+            `;
+            startBotBtn.classList.remove('bg-pink-600');
+            startBotBtn.classList.add('bg-red-600');
+            
+            logToConsole(`Starting follower growth campaign for @${targetUsername}`);
+            logToConsole(`Daily follow limit: ${dailyLimit}`);
+            logToConsole(`Target strategy: ${getStrategyName(targetAccounts)}`);
+            logToConsole(`Activity window: ${startTime} to ${endTime}`);
+            
+            // Simulate periodic follows
+            campaignInterval = setInterval(() => {
+                simulateActivity(dailyLimit);
+            }, 3000);
+        }
+        
+        // Stop the bot simulation
+        function stopBot() {
+            isRunning = false;
+            clearInterval(campaignInterval);
+            startBotBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                </svg>
+                <span>Start Growth Campaign</span>
+            `;
+            startBotBtn.classList.add('bg-pink-600');
+            startBotBtn.classList.remove('bg-red-600');
+            
+            logToConsole("Campaign stopped");
+        }
+        
+        // Simulate follower activity
+        function simulateActivity(dailyLimit) {
+            const enableLikes = document.getElementById('enableLikes').checked;
+            
+            // Pick a random account from our sample
+            const randomAccount = sampleAccounts[Math.floor(Math.random() * sampleAccounts.length)];
+            const username = randomAccount.username;
+            
+            // Follow action
+            if (totalFollowed < dailyLimit) {
+                totalFollowed++;
+                logToConsole(`Followed @${username}`);
+                
+                // Add to activity log
+                addActivity(`Followed @${username}`, new Date().toLocaleTimeString());
+                
+                // Random chance for follow back (10-30%)
+                if (Math.random() < 0.2) {
+                    setTimeout(() => {
+                        followBacks++;
+                        currentFollowers++;
+                        logToConsole(`🎉 @${username} followed you back!`);
+                        addActivity(`@${username} followed you back`, new Date().toLocaleTimeString());
+                        updateStats();
+                    }, 2000 + Math.random() * 5000);
+                }
+            }
+            
+            // Like action
+            if (enableLikes && likesGiven < dailyLimit * 3 && Math.random() < 0.7) {
+                likesGiven++;
+                setTimeout(() => {
+                    logToConsole(`Liked latest post from @${username}`);
+                    addActivity(`Liked post from @${username}`, new Date().toLocaleTimeString());
+                    updateStats();
+                }, 1000 + Math.random() * 3000);
+            }
+            
+            // Update stats
+            updateStats();
+            
+            // Check if we've reached daily limit
+            if (totalFollowed >= dailyLimit) {
+                logToConsole(`Daily follow limit reached (${dailyLimit})`);
+                stopBot();
+            }
+        }
+        
+        // Follow an account manually
+        function followAccount(username) {
+            if (totalFollowed >= parseInt(document.getElementById('dailyLimit').value)) {
+                logToConsole(`Daily follow limit reached. Cannot follow @${username}`);
+                return;
+            }
+            
+            totalFollowed++;
+            logToConsole(`Followed @${username}`);
+            addActivity(`Followed @${username}`, new Date().toLocaleTimeString());
+            
+            // Random chance for follow back (10-30%)
+            if (Math.random() < 0.2) {
+                setTimeout(() => {
+                    followBacks++;
+                    currentFollowers++;
+                    logToConsole(`🎉 @${username} followed you back!`);
+                    addActivity(`@${username} followed you back`, new Date().toLocaleTimeString());
+                    updateStats();
+                }, 2000 + Math.random() * 5000);
+            }
+            
+            updateStats();
+        }
+        
+        // Update statistics display
+        function updateStats() {
+            totalFollowedSpan.textContent = totalFollowed;
+            followBacksSpan.textContent = followBacks;
+            likesGivenSpan.textContent = likesGiven;
+            
+            const dailyLimit = parseInt(document.getElementById('dailyLimit').value);
+            const progressPercent = Math.min(Math.round((totalFollowed / dailyLimit) * 100), 100);
+            dailyProgressSpan.textContent = `${progressPercent}%`;
+            progressBar.style.width = `${progressPercent}%`;
+            
+            const growthRate = followBacks > 0 ? Math.round((followBacks / totalFollowed) * 100) : 0;
+            growthRateSpan.textContent = `${growthRate}%`;
+        }
+        
+        // Load suggested accounts
+        function loadSuggestedAccounts() {
+            suggestedAccountsDiv.innerHTML = '';
+            
+            // Shuffle array to get random order
+            const shuffledAccounts = [...sampleAccounts].sort(() => 0.5 - Math.random());
+            
+            // Take first 6
+            const accountsToShow = shuffledAccounts.slice(0, 6);
+            
+            accountsToShow.forEach(account => {
+                const accountCard = document.createElement('div');
+                accountCard.className = 'account-card bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300';
+                accountCard.innerHTML = `
+                    <div class="p-4">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <img src="https://placehold.co/60x60" alt="${account.username} profile picture" class="rounded-full w-12 h-12">
+                            <div>
+                                <h3 class="font-semibold">@${account.username}</h3>
+                                <p class="text-gray-500 text-sm">${account.followers} followers</p>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs px-2 py-1 bg-gray-100 rounded-full">${account.category}</span>
+                            <button class="follow-btn bg-pink-600 text-white px-3 py-1 rounded-full text-sm hover:bg-pink-700 transition-colors" data-username="${account.username}">
+                                Follow
+                            </button>
+                        </div>
+                    </div>
+                `;
+                suggestedAccountsDiv.appendChild(accountCard);
+            });
+            
+            logToConsole("Suggested accounts refreshed");
+        }
+        
+        // Add activity to log
+        function addActivity(action, time) {
+            const activityItem = document.createElement('div');
+            activityItem.className = 'p-3 bg-gray-50 rounded-lg flex justify-between items-center';
+            activityItem.innerHTML = `
+                <div>${action}</div>
+                <div class="text-sm text-gray-500">${time}</div>
+            `;
+            
+            // Add to beginning
+            activityLog.insertBefore(activityItem, activityLog.firstChild);
+            
+            // Limit to 10 items
+            if (activityLog.children.length > 10) {
+                activityLog.removeChild(activityLog.lastChild);
+            }
+        }
+        
+        // Log messages to console output
+        function logToConsole(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            consoleOutput.innerHTML += `[${timestamp}] ${message}\n`;
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
+        
+        // Clear console output
+        function clearConsole() {
+            consoleOutput.innerHTML = '';
+        }
+        
+        // Get strategy name
+        function getStrategyName(value) {
+            const strategies = {
+                'similar': 'Similar Accounts',
+                'location': 'By Location',
+                'hashtags': 'By Hashtags',
+                'competitor': 'Competitor Followers'
+            };
+            return strategies[value] || value;
+        }
+        
+        // Initialize the page when loaded
+        window.addEventListener('DOMContentLoaded', initialize);
+    </script>
+</body>
+</html>
+</html>
